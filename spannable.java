@@ -36,44 +36,43 @@ public class MainActivity extends Activity {
                 if (layout!=null){
                     int line = layout.getLineForVertical(y);
                     int location = layout.getOffsetForHorizontal(line, x);
-                    //if(layout.getText().charAt(location)!=' ') {
-                       // String word = getWord(layout.getText().toString(), location);
 
+                    try {
+                        if(location >= layout.getText().toString().length())  location = layout.getText().toString().length()-1;
+                            if (layout.getText().toString().charAt(location) != ' ') {
+                                 String word = getWord(layout.getText().toString(), location);
+                                //info.setText(Integer.toString(layout.getText().toString().length()));
+                                info.setText(word);
+                                getColor(textView,location);
+                                //info.setText(Integer.toString(location));
+                            }
 
+                    }catch(StringIndexOutOfBoundsException e2){
+                         info.setText("Out of range!");
+                    }
+                    //}
+                    //else info.setText("Out of range!");
 
-                        info.setText(location);
-                   // }
-
-                    //if (layout.getText().charAt(location)!=' ') {
-                       // for (int m = location; m >= 0; m--) {
-                          //  if (layout.getText().charAt(m) == ' ' || m == 0)
-                              //  for (int n = location; n <= layout.getText().toString().length(); n++) {
-                                 //   if (layout.getText().charAt(n) == ' ' || n == layout.getText().toString().length()) {
-                                     //   String word = layout.getText().toString().substring(m+1, n );
-                                    //    info.setText(word);
-                                    //    m=-1;
-                                     //   n=layout.getText().toString().length()+1;
-
-                                   // }
-                             //   }
-                       // }
-                   // }
                     //Log.i("index", ""+characterOffset);
                     //info.setText(Integer.toString(characterOffset));
 
                 }
                 return true;
         }
-        private String getWord(String text,int location,SpannableStringBuilder style) {
+        private void getColor(TextView textView,int location) {
+            int startPosition = findStartPosition(textView.getText().toString(),location);
+            int endPosition = findEndPosition(textView.getText().toString(),location);
+            SpannableStringBuilder style=new SpannableStringBuilder(textView.getText().toString());
+            style.setSpan(new BackgroundColorSpan(Color.RED),startPosition+1,endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textView.getText();
+        }
+        private String getWord(String text,int location) {
             if(text.charAt(location)==' ')
                 return String.valueOf(text.charAt(location));
             int startPosition = findStartPosition(text,location);
             int endPosition = findEndPosition(text,location);
 
-            style=new SpannableStringBuilder(text);
-            style.setSpan(new BackgroundColorSpan(Color.RED),startPosition+1,endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textView.setText(style);
-            //if(startPosition == -1 || endPosition == -1) return "NULL!";
+            if(endPosition == -1) return "NULL!";
             return text.substring(startPosition + 1,endPosition);
         }
 
