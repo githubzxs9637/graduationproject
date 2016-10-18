@@ -17,54 +17,84 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
     private TextView  info=null;
     private TextView textView=null;
+    private TextView time=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         info=(TextView)super.findViewById(R.id.info);
+        time=(TextView)super.findViewById(R.id.time);
         textView=(TextView)super.findViewById(R.id.maintext);
         textView.setOnTouchListener(new PicOnTouchListener());
     }
     private class PicOnTouchListener implements OnTouchListener{
+        long startTime;
+        long endTime;
+        double timeUsed;
+        double timeUsed2;
+
         @Override
         public boolean onTouch(View v, MotionEvent event){
                 // TODO Auto-generated method stub
+            int action = event.getAction();
+
+            if (action == MotionEvent.ACTION_DOWN) {
+                startTime = System.currentTimeMillis();
                 Layout layout = ((TextView) v).getLayout();
-                int x = (int)event.getX();
-                int y = (int)event.getY();
-                if (layout!=null){
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                if (layout != null) {
                     int line = layout.getLineForVertical(y);
                     int location = layout.getOffsetForHorizontal(line, x);
 
                     try {
-                        if(location >= layout.getText().toString().length())  location = layout.getText().toString().length()-1;
-                            if (layout.getText().toString().charAt(location) != ' ') {
-                                 String word = getWord(layout.getText().toString(), location);
-                                //info.setText(Integer.toString(layout.getText().toString().length()));
-                                info.setText(word);
-                                getColor(textView,location);
-                                //info.setText(Integer.toString(location));
-                            }
+                        if (location >= layout.getText().toString().length())
+                            location = layout.getText().toString().length() - 1;
+                        if (layout.getText().toString().charAt(location) != ' ') {
+                            String word = getWord(layout.getText().toString(), location);
+                            //info.setText(Integer.toString(layout.getText().toString().length()));
+                            info.setText(word);
+                            getColor(textView, location);
 
-                    }catch(StringIndexOutOfBoundsException e2){
-                         info.setText("Out of range!");
+                            //info.setText(Integer.toString(location));
+                        }
+
+                    } catch (StringIndexOutOfBoundsException e2) {
+                        info.setText("Out of range!");
                     }
-                    //}
-                    //else info.setText("Out of range!");
-
-                    //Log.i("index", ""+characterOffset);
-                    //info.setText(Integer.toString(characterOffset));
-
                 }
+                }
+            if (action == MotionEvent.ACTION_UP) {
+                Layout layout = ((TextView) v).getLayout();
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                if (layout != null) {
+                    int line = layout.getLineForVertical(y);
+                    int location = layout.getOffsetForHorizontal(line, x);
+                    try {
+
+                        if (location >= layout.getText().toString().length())
+                            location = layout.getText().toString().length() - 1;
+                        if (layout.getText().toString().charAt(location) != ' ') {
+                            endTime = System.currentTimeMillis();
+                            timeUsed = endTime - startTime;
+                            timeUsed2 = timeUsed / 1000;
+                            time.setText(Double.toString(timeUsed2));
+                        }
+                    } catch (StringIndexOutOfBoundsException e2) {
+                        info.setText("Out of range!");
+                    }
+                }
+            }
                 return true;
         }
         private void getColor(TextView textView,int location) {
             int startPosition = findStartPosition(textView.getText().toString(),location);
             int endPosition = findEndPosition(textView.getText().toString(),location);
-            SpannableStringBuilder style=new SpannableStringBuilder(textView.getText().toString());
-            style.setSpan(new BackgroundColorSpan(Color.RED),startPosition+1,endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textView.getText();
+            SpannableStringBuilder style=new SpannableStringBuilder(textView.getText());
+            style.setSpan(new BackgroundColorSpan(Color.YELLOW),startPosition+1,endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textView.setText(style);
         }
         private String getWord(String text,int location) {
             if(text.charAt(location)==' ')
