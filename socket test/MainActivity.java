@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 
                 try {
                     Socket socket=new Socket();
-                    socket.connect(new InetSocketAddress(host, 12345),5000);
+                    socket.connect(new InetSocketAddress(host, 8000),5000);
 
                     OutputStream os=socket.getOutputStream();
                     os.write(result.getBytes());
